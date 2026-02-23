@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>AgendaJá - Painel de Controle</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 900px; mx-auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { grid-column: 1 / span 2; text-align: center; color: #2c3e50; }
+        label { display: block; margin-top: 10px; font-size: 12px; color: #666; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        button:hover { background-color: #2980b9; }
+        #mensagem { font-weight: bold; margin-top: 15px; text-align: center; }
+        .agendamento-item { border-left: 5px solid #3498db; background: #fafafa; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .status-badge { font-size: 10px; background: #eee; padding: 2px 6px; border-radius: 10px; float: right; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>AgendaJá</h1>
+
+    <div class="card">
+        <h3>Novo Agendamento</h3>
+        <input type="text" id="tenant" placeholder="ID da Empresa (Ex: itu-tech)">
+        <input type="text" id="cliente" placeholder="Nome do Cliente">
+
+        <label>Início</label>
+        <input type="datetime-local" id="inicio">
+
+        <label>Término</label>
+        <input type="datetime-local" id="fim">
+
+        <button id="btnAgendar">AGENDAR AGORA</button>
+        <p id="mensagem"></p>
+    </div>
+
+    <div class="card">
+        <div style="display: flex; justify-content: space-between;">
+            <h3>Meus Agendamentos</h3>
+            <button onclick="buscarAgendamentos()" style="width: auto; margin: 0; padding: 5px 10px; font-size: 12px;">Atualizar</button>
+        </div>
+        <div id="lista" style="margin-top: 20px;">
+            <p style="color: #999;">Digite o ID da empresa para buscar...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/appointments';
+
+    // Capturando o clique do botão de forma manual e segura
+    document.getElementById('btnAgendar').addEventListener('click', async function() {
+        console.log("Botão clicado!"); // Isso deve aparecer no seu console
+
+        const tenantId = document.getElementById('tenant').value;
+        const customerName = document.getElementById('cliente').value;
+        const startTime = document.getElementById('inicio').value;
+        const endTime = document.getElementById('fim').value;
+
+        if (!tenantId || !customerName || !startTime || !endTime) {
+            exibirMensagem("Preencha todos os campos!", "red");
+            return;
+        }
+
+        const dados = {
+            tenantId: tenantId,
+            customerName: customerName,
+            startTime: startTime + ":00", // Formato ISO para o Java LocalDateTime
+            endTime: endTime + ":00",
+            status: "PENDING"
+        };
+
+        try {
+            const resposta = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+
+            if (resposta.ok) {
+                exibirMensagem("Agendamento realizado!", "green");
+                buscarAgendamentos();
+            } else {
+                const erro = await resposta.json();
+                exibirMensagem("Erro: " + (erro.message || "Falha no agendamento"), "red");
+            }
+        } catch (error) {
+            console.error("Erro na requisição:", error);
+            exibirMensagem("Não foi possível conectar ao servidor.", "red");
+        }
+    });
+
+    async function buscarAgendamentos() {
+    const tenantId = document.getElementById('tenant').value;
+    if (!tenantId) return;
+
+    try {
+        const resposta = await fetch(`${API_URL}?tenantId=${tenantId}`);
+        const dados = await resposta.json();
+        const listaDiv = document.getElementById('lista');
+
+        listaDiv.innerHTML = dados.map(app => `
+            <div class="agendamento-item" style="border-left-color: ${getColorByStatus(app.status)}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${app.customerName}</strong><br>
+                        <small>${new Date(app.startTime).toLocaleString()}</small>
+                    </div>
+
+                    <div>
+                        <select onchange="alterarStatus(${app.id}, this.value)"
+                                style="font-size: 10px; padding: 4px; border-radius: 4px;">
+                            <option value="PENDING" ${app.status === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                            <option value="CONFIRMED" ${app.status === 'CONFIRMED' ? 'selected' : ''}>CONFIRMED</option>
+                            <option value="COMPLETED" ${app.status === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
+                            <option value="CANCELLED" ${app.status === 'CANCELLED' ? 'selected' : ''}>CANCELLED</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `).join('') || '<p>Nenhum agendamento encontrado.</p>';
+    } catch (e) {
+        console.error("Erro ao buscar:", e);
+    }
+}
+
+// Função auxiliar para mudar a cor da borda conforme o status
+function getColorByStatus(status) {
+    switch(status) {
+        case 'CONFIRMED': return '#2ecc71'; // Verde
+        case 'CANCELLED': return '#e74c3c'; // Vermelho
+        case 'COMPLETED': return '#9b59b6'; // Roxo
+        default: return '#3498db';           // Azul (Pending)
+    }
+}
+
+    async function alterarStatus(id, novoStatus) {
+    const tenantId = document.getElementById('tenant').value;
+
+    // Confirmação para evitar cliques acidentais (boa prática de UX)
+    if (!confirm(`Deseja realmente alterar o status para ${novoStatus}?`)) return;
+
+    try {
+        // Chamando seu endpoint PATCH: /api/appointments/{id}/status?status=...&tenantId=...
+        const resposta = await fetch(`${API_URL}/${id}/status?status=${novoStatus}&tenantId=${tenantId}`, {
+            method: 'PATCH'
+        });
+
+        if (resposta.ok) {
+            alert("Status atualizado com sucesso!");
+            buscarAgendamentos(); // Atualiza a lista na hora
+        } else {
+            const erro = await resposta.json();
+            // Aqui você verá a BusinessException do seu Java na tela!
+            alert("Erro de Negócio: " + (erro.message || "Não foi possível alterar o status."));
+        }
+    } catch (error) {
+        console.error("Erro na requisição PATCH:", error);
+        alert("Erro ao conectar com o backend.");
+    }
+}
+
+    function exibirMensagem(texto, cor) {
+        const msg = document.getElementById('mensagem');
+        msg.innerText = texto;
+        msg.style.color = cor;
+    }
+</script>
+
+</body>
+</html>
