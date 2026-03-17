@@ -1,3 +1,5 @@
+[Português 🇧🇷](./README_pt.md) | [English 🇺🇸](./README.md)
+
 # AgendaJá - Multitenant Scheduling SaaS
 
 **AgendaJá** is a robust API developed with Java 21 and Spring Boot 3, designed to operate as a SaaS (Software as a Service) model. The system allows multiple companies (tenants) to manage their appointments in an isolated and secure manner within a single infrastructure.
