@@ -42,3 +42,12 @@ In the project root (or the `/docker` folder), run the command to start the loca
 
 ```bash
 docker-compose up -d
+```
+
+### 3. Running the API
+```bash
+mvn spring-boot:run
+```
+
+### 4. Accessing the Local Documentation
+With the application running locally, go to: http://localhost:8080/swagger-ui.html
