@@ -50,5 +50,6 @@ mvn spring-boot:run
 Com a aplicação rodando, acesse: http://localhost:8080/swagger-ui.html
 
 ### 🧪 Qualidade de Software e Testes Automatizados
+
 Para garantir a integridade das regras de negócio e o isolamento multitenant, o projeto conta com uma suíte de testes de integração utilizando JUnit 5 e RestAssured. Estes testes validam desde a criação de agendamentos até as travas de segurança entre diferentes empresas.
 ![Swagger UI](./img/testes-sucesso.png)
