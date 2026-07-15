@@ -1,55 +1,54 @@
-# AgendaJá - SaaS de Agendamentos Multitenant
+[Português 🇧🇷](./README_pt.md) | [English 🇺🇸](./README.md)
 
-O **AgendaJá** é uma API robusta desenvolvida em **Java 21** e **Spring Boot 3**, projetada para operar como um modelo SaaS (Software as a Service). O sistema permite que múltiplas empresas (tenants) gerenciem seus agendamentos de forma isolada e segura em uma única infraestrutura.
 
-## 🚀 Diferenciais Técnicos
+# AgendaJá - SaaS Multitenant de Agendamentos
 
-* **Arquitetura Multitenant**: Isolamento lógico de dados por `tenantId` em todas as requisições, garantindo que uma empresa nunca acesse os dados de outra.
-* **Regras de Negócio Avançadas**: Validações automáticas para impedir agendamentos no passado, conflitos de horário e duração mínima de serviços.
-* **Documentação Interativa**: API 100% documentada com **Swagger (OpenAPI)**, permitindo testes rápidos e visuais dos endpoints.
-* **Qualidade de Software**: Suíte de testes automatizados com **JUnit 5** e **RestAssured**, validando o fluxo de sucesso e cenários de erro.
-* **Infraestrutura Moderna**: Ambiente conteinerizado com **Docker** para o banco de dados PostgreSQL, garantindo portabilidade.
+O **AgendaJá** é uma API robusta desenvolvida com Java 21 e Spring Boot 3, projetada para operar no modelo SaaS (Software as a Service). O sistema permite que múltiplas empresas (tenants) gerenciem seus agendamentos de forma isolada e segura dentro de uma única infraestrutura.
+
+🌍 **Aplicação no Ar (Demo):** [Acesse o Dashboard aqui](https://agendaja-api.vercel.app/)
+📖 **Documentação da API (Swagger):** [Acesse a API aqui](https://agendaja-wtt0.onrender.com/swagger-ui/index.html#/Agendamentos/getAll)
+
+## 🚀 Destaques Técnicos
+* **Arquitetura Multitenant**: Isolamento lógico de dados utilizando `tenantId` em todas as requisições, garantindo que uma empresa nunca acesse os dados de outra.
+* **Regras de Negócio Avançadas**: Validações automáticas para impedir agendamentos retroativos, conflito de horários e exigência de duração mínima de serviços.
+* **Qualidade de Software**: Suíte de testes de integração automatizados utilizando JUnit 5 e RestAssured, validando fluxos completos desde o endpoint até a persistência no banco.
+* **Cloud & DevOps**: Aplicação totalmente conteinerizada com um `Dockerfile` customizado e hospedada em ambiente de nuvem, garantindo alta portabilidade e preparo para CI/CD.
 
 ## 📸 Demonstração Visual
 
-### Interface do Usuário (Frontend)
-Dashboard minimalista desenvolvido para validar as operações de agendamento e o ciclo de vida dos estados em tempo real.
+### Interface de Usuário (Frontend)
+Dashboard minimalista desenvolvido para validar as operações de agendamento e o ciclo de vida dos status em tempo real.
 ![Dashboard do AgendaJá](./img/dashboard.png)
 
 ### Documentação Interativa (Swagger)
-A API segue os padrões OpenAPI 3.0, garantindo uma documentação clara e fácil integração.
+A API segue o padrão OpenAPI 3.1, garantindo documentação clara e facilitando a integração entre equipes de desenvolvimento.
 ![Swagger UI](./img/swagger-api.png)
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias e Infraestrutura
 
-* **Backend**: Java 21, Spring Boot 3, Spring Data JPA, Lombok.
-* **Banco de Dados**: PostgreSQL 15 rodando via Docker.
+* **Backend**: Java 21, Spring Boot 3, Spring Data JPA.
+* **Banco de Dados**: PostgreSQL 15 (Local via Docker Compose / Produção via banco Serverless Neon).
 * **Testes**: JUnit 5, RestAssured.
-* **Documentação**: SpringDoc OpenAPI (Swagger).
-* **Frontend**: HTML5 e JavaScript puro (Vanilla JS).
+* **Hospedagem Cloud**: Render (API Backend Conteinerizada), Vercel (Dashboard Frontend Estático).
 
-## 📋 Como Executar o Projeto
+## 📋 Como rodar o projeto localmente
 
 ### 1. Requisitos
 * Java 21+
 * Docker e Docker Compose
 * Maven
 
-### 2. Configurando o Banco de Dados
-Na raiz do projeto (ou na pasta `/docker`), execute o comando para subir o PostgreSQL:
+### 2. Configuração do Banco de Dados
+Na raiz do projeto (ou na pasta `/docker`), rode o comando para iniciar a instância local do PostgreSQL:
+
 ```bash
 docker-compose up -d
 ```
 
-### 3. Executando a API
-``` bash
+### 3. Rodando a API
+```bash
 mvn spring-boot:run
 ```
 
-### 4. Acessando a Documentação
-Com a aplicação rodando, acesse: http://localhost:8080/swagger-ui.html
-
-## 🧪 Qualidade de Software e Testes Automatizados
-
-Para garantir a integridade das regras de negócio e o isolamento multitenant, o projeto conta com uma suíte de testes de integração utilizando JUnit 5 e RestAssured. Estes testes validam desde a criação de agendamentos até as travas de segurança entre diferentes empresas.
-![Swagger UI](./img/testes-sucesso.png)
+### 4. Acessando a Documentação Local
+Com a aplicação rodando localmente, acesse: http://localhost:8080/swagger-ui.html
