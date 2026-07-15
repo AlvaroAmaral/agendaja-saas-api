@@ -49,7 +49,8 @@
 </div>
 
 <script>
-    const API_URL = 'https://agendaja-wtt0.onrender.com/';
+    const API_URL = 'https://agendaja-wtt0.onrender.com/api/appointments';
+
 
     // Capturando o clique do botão de forma manual e segura
     document.getElementById('btnAgendar').addEventListener('click', async function() {
@@ -127,7 +128,8 @@
     }
 }
 
-// Função auxiliar para mudar a cor da borda conforme o status
+//Função auxiliar para mudar a cor da borda conforme o status
+
 function getColorByStatus(status) {
     switch(status) {
         case 'CONFIRMED': return '#2ecc71'; // Verde
@@ -168,6 +170,7 @@ function getColorByStatus(status) {
         msg.innerText = texto;
         msg.style.color = cor;
     }
+
 </script>
 
 </body>
